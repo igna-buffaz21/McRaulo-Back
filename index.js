@@ -1,7 +1,10 @@
-// index.js
 import express from 'express';
 import dotenv from 'dotenv';
 import sql, { testConnection } from './config/db.js';
+import pedidoRouter from './Router/pedidosR.js'; 
+import productoRouter from './Router/productosR.js'; // Importar el router de productos
+import ingredientesRouter from './Router/ingredientesR.js';
+import clientesRouter from './Router/clientesR.js'
 
 // Cargar variables de entorno
 dotenv.config();
@@ -9,12 +12,6 @@ dotenv.config();
 // Crear aplicación Express
 const app = express(); //te levanta un servidor http //se usa una sola vez en toda la app
 const PORT = process.env.PORT; 
-
-import pedidoRouter from './Router/pedidosR.js'; 
-import productoRouter from './Router/productosR.js'; // Importar el router de productos
-import ingredientesRouter from './Router/ingredientesR.js';
-import clientesRouter from './Router/clientesR.js'
-
 
 // Middleware para parsear JSON
 app.use(express.json()); ///todas las respuestas se devuleven en json
