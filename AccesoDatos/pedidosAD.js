@@ -362,6 +362,38 @@ async function ObtenerEstadisticas() {
   }
 }
 
+async function obtenerPedidoPorEstado(estado) {
+  try {
+    const pedidos = await sql`
+      SELECT * FROM pedidos
+      WHERE estado = ${estado}
+      ORDER BY fecha_hora DESC;
+    `;    
+
+    return pedidos;
+  }
+  catch(error) {
+    throw new Error('Error al obtener los pedidos por estado: ' + error.message);
+  }
+}
+
+async function filtrarPedidosPorFecha(desde, hasta) {
+  try {
+
+    const pedidos = await sql`
+    SELECT * FROM pedidos
+    WHERE fecha_hora >= ${desde} AND fecha_hora <= ${hasta}
+    ORDER BY fecha_hora DESC;
+  `;
+
+    return pedidos;
+
+  }
+  catch (error) {
+    throw new Error('Error al filtrar pedidos por fecha: ' + error.message);
+  }
+}
+
   
 
 export default {
@@ -372,5 +404,7 @@ export default {
     ActualizarEstadoPedido,
     EliminarPedido,
     ObtenerDetalleProductoEnPedido,
-    ObtenerEstadisticas
+    ObtenerEstadisticas,
+    obtenerPedidoPorEstado,
+    filtrarPedidosPorFecha
   };

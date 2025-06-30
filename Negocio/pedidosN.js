@@ -84,6 +84,24 @@ async function ObtenerEstadisticas() {
   return estadisticas;
 }
 
+async function obtenerPedidosPorEstado(estado) {
+  if (!estado) {
+    throw new Error('Estado del pedido es requerido');
+  }
+
+  return await pedidosAD.obtenerPedidoPorEstado(estado);
+}
+
+async function filtrarPedidosPorFecha(desde, hasta) {
+
+  if (!desde || !hasta) {
+    throw new Error('Fechas de inicio y fin son requeridas');
+  }
+
+  return await pedidosAD.filtrarPedidosPorFecha(desde, hasta);
+
+}
+
 
 export default {
     obtenerPedido,
@@ -93,5 +111,7 @@ export default {
     ActualizarEstadoPedido,
     EliminarPedido,
     ObtenerDetalleProductoEnPedido,
-    ObtenerEstadisticas
+    ObtenerEstadisticas,
+    obtenerPedidosPorEstado,
+    filtrarPedidosPorFecha
   };

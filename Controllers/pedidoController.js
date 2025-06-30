@@ -134,6 +134,52 @@ async function ObtenerEstadisticas(req, res) {
     }
 }
 
+async function obtenerPedidoPorEstado(req, res) {
+    try {
+        const {estado} = req.params;
+
+        console.log('Estado recibido:', estado);
+
+        const pedidos = await pedidosN.obtenerPedidosPorEstado(estado);
+
+        res.json({
+            status: 'OK',
+            data: pedidos
+          });
+    }
+    catch (error) {
+        res.status(500).json({
+            status: 'ERROR',
+            message: `Error al obtener pedidos con estado ${estado}`,
+            error: error.message
+          });
+    }
+}
+
+async function filtrarPedidosPorFecha(req, res) {
+
+    try {
+        const { desde, hasta } = req.params;
+
+        console.log('Fechas recibidas:', desde, hasta);
+
+        const pedidos = await pedidosN.filtrarPedidosPorFecha(desde, hasta);
+
+        res.json({
+            status: 'OK',
+            data: pedidos
+          });
+    }
+    catch (error) {
+        res.status(500).json({
+            status: 'ERROR',
+            message: 'Error al filtrar pedidos por fecha',
+            error: error.message
+          });
+    }
+    
+}
+
 export default {
     obtenerPedido,
     obtenerPedidoPorId,
@@ -142,5 +188,7 @@ export default {
     ActualizarEstadoPedido,
     EliminarPedido,
     ObtenerDetalleProductoEnPedido,
-    ObtenerEstadisticas
+    ObtenerEstadisticas,
+    obtenerPedidoPorEstado,
+    filtrarPedidosPorFecha
   };

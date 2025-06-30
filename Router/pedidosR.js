@@ -10,6 +10,8 @@ router.post('/crearPedido', clienteController.crearPedidoN);
 router.put('/actualizarEstado', clienteController.ActualizarEstadoPedido);
 router.delete('/eliminarPedido/:id', clienteController.EliminarPedido);
 router.get('/obtenerDetalleProductoEnPedido/:idPedido/:idProducto', clienteController.ObtenerDetalleProductoEnPedido);
-router.get('/obtenerEstadisticas', clienteController.ObtenerEstadisticas)
+router.get('/obtenerEstadisticas', clienteController.ObtenerEstadisticas);
+router.get('/obtenerPedidosPorEstado/:estado', clienteController.obtenerPedidoPorEstado);
+router.get('/filtrarPedidosPorFecha/:desde/:hasta', clienteController.filtrarPedidosPorFecha);
 
 export default router;

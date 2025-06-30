@@ -73,32 +73,6 @@ app.use('/api/ingredientes', ingredientesRouter);
 app.use('/api/clientes', clientesRouter)
 
 
-// 6. Obtener pedidos por estado
-app.get('/api/pedidos/estado/:estado', async (req, res) => {
-  const { estado } = req.params;
-  
-  try {
-    const pedidos = await sql`
-      SELECT * FROM pedidos
-      WHERE estado = ${estado}
-      ORDER BY fecha_hora DESC;
-    `;
-    
-    res.json({
-      status: 'OK',
-      data: pedidos
-    });
-  } catch (error) {
-    console.error(`Error al obtener pedidos con estado ${estado}:`, error);
-    res.status(500).json({
-      status: 'ERROR',
-      message: `Error al obtener pedidos con estado ${estado}`,
-      error: error.message
-    });
-  }
-});
-
-
 // 9. Agregar productos a un pedido existente (MODIFICADO)
 app.post('/api/pedidos/:id/productos', async (req, res) => {
   const { id } = req.params;
@@ -237,39 +211,6 @@ app.post('/api/pedidos/:id/productos', async (req, res) => {
     res.status(500).json({
       status: 'ERROR',
       message: `Error al agregar productos al pedido ${id}`,
-      error: error.message
-    });
-  }
-});
-
-// 10. Filtrar pedidos por rango de fechas
-app.get('/api/pedidos/filtro/fecha', async (req, res) => {
-  const { desde, hasta } = req.query;
-  
-  // Validar fechas
-  if (!desde || !hasta) {
-    return res.status(400).json({
-      status: 'ERROR',
-      message: 'Debe proporcionar fechas de inicio y fin (desde, hasta) en formato timestamp'
-    });
-  }
-  
-  try {
-    const pedidos = await sql`
-      SELECT * FROM pedidos
-      WHERE fecha_hora >= ${desde} AND fecha_hora <= ${hasta}
-      ORDER BY fecha_hora DESC;
-    `;
-    
-    res.json({
-      status: 'OK',
-      data: pedidos
-    });
-  } catch (error) {
-    console.error('Error al filtrar pedidos por fecha:', error);
-    res.status(500).json({
-      status: 'ERROR',
-      message: 'Error al filtrar pedidos por fecha',
       error: error.message
     });
   }
@@ -424,32 +365,6 @@ app.delete('/api/pedidos/:id/productos/:idProducto', async (req, res) => {
   }
 });
 
-// --- ENDPOINTS ADICIONALES ---
-
-// 18. Obtener todas las categorías de productos
-app.get('/api/categorias', async (req, res) => {
-  try {
-    const categorias = await sql`
-      SELECT DISTINCT categoria 
-      FROM productos 
-      WHERE disponible = TRUE
-      ORDER BY categoria;
-    `;
-    
-    res.json({
-      status: 'OK',
-      data: categorias.map(c => c.categoria)
-    });
-  } catch (error) {
-    console.error('Error al obtener categorías:', error);
-    res.status(500).json({
-      status: 'ERROR',
-      message: 'Error al obtener categorías',
-      error: error.message
-    });
-  }
-});
-
 // 19. Calcular precio estimado de un producto personalizado
 app.post('/api/productos/:id/calcular-precio', async (req, res) => {
   const { id } = req.params;
@@ -509,31 +424,6 @@ app.post('/api/productos/:id/calcular-precio', async (req, res) => {
     res.status(500).json({
       status: 'ERROR',
       message: `Error al calcular precio del producto`,
-      error: error.message
-    });
-  }
-});
-
-// 20. Obtener historial de pedidos de un método de pago específico
-app.get('/api/pedidos/metodo-pago/:metodo', async (req, res) => {
-  const { metodo } = req.params;
-  
-  try {
-    const pedidos = await sql`
-      SELECT * FROM pedidos
-      WHERE metodo_pago = ${metodo}
-      ORDER BY fecha_hora DESC;
-    `;
-    
-    res.json({
-      status: 'OK',
-      data: pedidos
-    });
-  } catch (error) {
-    console.error(`Error al obtener pedidos con método de pago ${metodo}:`, error);
-    res.status(500).json({
-      status: 'ERROR',
-      message: `Error al obtener pedidos con método de pago ${metodo}`,
       error: error.message
     });
   }
