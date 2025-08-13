@@ -180,6 +180,26 @@ async function filtrarPedidosPorFecha(req, res) {
     
 }
 
+async function obtenerResumenDeProductosEnPedido(req, res) {
+    try {
+        const { id } = req.params;
+
+        const resumen = await pedidosN.obtenerResumenDeProductosEnPedido(id);
+
+        res.json({
+            status: 'OK',
+            data: resumen
+        })
+    }
+    catch (error) {
+        res.status(500).json({
+            status: 'ERROR',
+            message: `Error al obtener resumen de productos en el pedido ${id}`,
+            error: error.message
+        });
+    }
+}
+
 export default {
     obtenerPedido,
     obtenerPedidoPorId,
@@ -190,5 +210,6 @@ export default {
     ObtenerDetalleProductoEnPedido,
     ObtenerEstadisticas,
     obtenerPedidoPorEstado,
-    filtrarPedidosPorFecha
+    filtrarPedidosPorFecha,
+    obtenerResumenDeProductosEnPedido
   };

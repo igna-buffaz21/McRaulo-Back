@@ -102,6 +102,16 @@ async function filtrarPedidosPorFecha(desde, hasta) {
 
 }
 
+async function obtenerResumenDeProductosEnPedido(id_pedido) {
+  
+  if (!id_pedido) {
+    throw new Error('ID del pedido es requerido');
+  }
+
+  return await pedidosAD.obtenerResumenDeProductosEnPedido(id_pedido);
+
+}
+
 
 export default {
     obtenerPedido,
@@ -113,5 +123,6 @@ export default {
     ObtenerDetalleProductoEnPedido,
     ObtenerEstadisticas,
     obtenerPedidosPorEstado,
-    filtrarPedidosPorFecha
+    filtrarPedidosPorFecha,
+    obtenerResumenDeProductosEnPedido
   };

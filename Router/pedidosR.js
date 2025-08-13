@@ -13,5 +13,6 @@ router.get('/obtenerDetalleProductoEnPedido/:idPedido/:idProducto', clienteContr
 router.get('/obtenerEstadisticas', clienteController.ObtenerEstadisticas);
 router.get('/obtenerPedidosPorEstado/:estado', clienteController.obtenerPedidoPorEstado);
 router.get('/filtrarPedidosPorFecha/:desde/:hasta', clienteController.filtrarPedidosPorFecha);
+router.get('/obtenerResumenDeProductosEnPedido/:id', clienteController.obtenerResumenDeProductosEnPedido);
 
 export default router;

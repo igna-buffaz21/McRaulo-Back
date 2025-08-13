@@ -394,6 +394,59 @@ async function filtrarPedidosPorFecha(desde, hasta) {
   }
 }
 
+async function obtenerResumenDeProductosEnPedido(id_pedido) {
+  try {
+        // Verificar que el pedido existe
+        const pedidoExistente = await sql`
+          SELECT * FROM pedidos
+          WHERE id_pedido = ${id};
+        `;
+        
+        if (pedidoExistente.length === 0) {
+          throw new Error("No hay ningun pedido con el id" + id_pedido);
+          
+        }
+        
+        // Obtener resumen agrupado por producto
+        const resumenProductos = await sql`
+          SELECT p.id_producto, p.nombre, p.categoria, p.precio_base,
+                 COUNT(pp.id_pedido_producto) as cantidad_total,
+                 SUM(pp.subtotal) as subtotal_total,
+                 AVG(pp.subtotal) as precio_promedio_personalizado
+          FROM pedidos_productos pp
+          JOIN productos p ON pp.id_producto = p.id_producto
+          WHERE pp.id_pedido = ${id}
+          GROUP BY p.id_producto, p.nombre, p.categoria, p.precio_base
+          ORDER BY cantidad_total DESC, p.nombre;
+        `;
+        
+        // Obtener detalles individuales de cada producto
+        const productosDetallados = await sql`
+          SELECT pp.id_pedido_producto, pp.id_producto, p.nombre, 
+                 pp.subtotal, pp.notas,
+                 CASE 
+                   WHEN COUNT(ppi.id_ingrediente) > 0 THEN true 
+                   ELSE false 
+                 END as tiene_personalizaciones
+          FROM pedidos_productos pp
+          JOIN productos p ON pp.id_producto = p.id_producto
+          LEFT JOIN pedidos_productos_ingredientes ppi ON pp.id_pedido_producto = ppi.id_pedido_producto
+          WHERE pp.id_pedido = ${id}
+          GROUP BY pp.id_pedido_producto, pp.id_producto, p.nombre, pp.subtotal, pp.notas
+          ORDER BY p.nombre, pp.id_pedido_producto;
+        `;
+
+        return {
+          pedido_actual: pedidoExistente[0],
+          resumen_productos: resumenProductos,
+          productos_detallados: productosDetallados
+        }
+  }
+  catch(error) {
+    throw new Error('Error al obtener el resumen de productos en el pedido: ' + error.message);
+  }
+}
+
   
 
 export default {
@@ -406,5 +459,6 @@ export default {
     ObtenerDetalleProductoEnPedido,
     ObtenerEstadisticas,
     obtenerPedidoPorEstado,
-    filtrarPedidosPorFecha
+    filtrarPedidosPorFecha,
+    obtenerResumenDeProductosEnPedido
   };

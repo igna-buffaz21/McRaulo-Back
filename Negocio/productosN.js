@@ -18,6 +18,7 @@ async function obtenerProductoPorCategoria(categoria) {
     return productos;
 }
 
+
 export default {
     obtenerProductos,
     obtenerProductoEspecificoConIngredientes,
