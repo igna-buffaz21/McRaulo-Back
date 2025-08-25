@@ -83,6 +83,8 @@ async function obtenerIngredientePorId(idIngrediente) {
     }
 }
 
+///hola
+
 export default {
     obtenerProductos,
     obtenerProductoEspecificoConIngredientes,
