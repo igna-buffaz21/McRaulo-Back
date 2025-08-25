@@ -59,8 +59,34 @@ async function obtenerProductoPorCategoria(categoria) {
     }
 }
 
+async function obtenerProductoPorId(id) {
+    try {
+        const result = await sql`
+            SELECT * FROM productos
+            WHERE id_producto = ${id} AND disponible = TRUE;
+        `;
+        return result;
+    } catch (error) {
+        throw new Error('Error al obtener el producto: ' + error.message);
+    }
+}
+
+async function obtenerIngredientePorId(idIngrediente) {
+    try {
+        const result = await sql`
+            SELECT * FROM ingredientes
+            WHERE id_ingrediente = ${idIngrediente};
+        `;
+        return result;
+    } catch (error) {
+        throw new Error('Error al obtener el ingrediente: ' + error.message);
+    }
+}
+
 export default {
     obtenerProductos,
     obtenerProductoEspecificoConIngredientes,
-    obtenerProductoPorCategoria
+    obtenerProductoPorCategoria,
+    obtenerProductoPorId,
+    obtenerIngredientePorId
 }

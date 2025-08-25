@@ -1,18 +1,20 @@
 import express from 'express';
-import clienteController from '../Controllers/pedidoController.js';
+import pedidosController from '../Controllers/pedidoController.js';
 
 const router = express.Router(); //permite crear rutas para manejar las peticiones HTTP relacionadas con los pedidos
 
-router.get('/obtenerTodosLosPedidos', clienteController.obtenerPedido);
-router.get('/obtenerPedidoPorId/:id', clienteController.obtenerPedidoPorId);
-router.get('/obtenerPedidoConDetalleCompleto/:id', clienteController.obtenerPedidoConDetalleCompleto);
-router.post('/crearPedido', clienteController.crearPedidoN);
-router.put('/actualizarEstado', clienteController.ActualizarEstadoPedido);
-router.delete('/eliminarPedido/:id', clienteController.EliminarPedido);
-router.get('/obtenerDetalleProductoEnPedido/:idPedido/:idProducto', clienteController.ObtenerDetalleProductoEnPedido);
-router.get('/obtenerEstadisticas', clienteController.ObtenerEstadisticas);
-router.get('/obtenerPedidosPorEstado/:estado', clienteController.obtenerPedidoPorEstado);
-router.get('/filtrarPedidosPorFecha/:desde/:hasta', clienteController.filtrarPedidosPorFecha);
-router.get('/obtenerResumenDeProductosEnPedido/:id', clienteController.obtenerResumenDeProductosEnPedido);
+router.get('/obtenerTodosLosPedidos', pedidosController.obtenerPedido);
+router.get('/obtenerPedidoPorId/:id', pedidosController.obtenerPedidoPorId);
+router.get('/obtenerPedidoConDetalleCompleto/:id', pedidosController.obtenerPedidoConDetalleCompleto);
+router.post('/crearPedido', pedidosController.crearPedidoN);
+router.put('/actualizarEstado', pedidosController.ActualizarEstadoPedido);
+router.delete('/eliminarPedido/:id', pedidosController.EliminarPedido);
+router.get('/obtenerDetalleProductoEnPedido/:idPedido/:idProducto', pedidosController.ObtenerDetalleProductoEnPedido);
+router.get('/obtenerEstadisticas', pedidosController.ObtenerEstadisticas);
+router.get('/obtenerPedidosPorEstado/:estado', pedidosController.obtenerPedidoPorEstado);
+router.get('/filtrarPedidosPorFecha/:desde/:hasta', pedidosController.filtrarPedidosPorFecha);
+router.get('/obtenerResumenDeProductosEnPedido/:id', pedidosController.obtenerResumenDeProductosEnPedido);
+router.post('/api/pedidos/:id/productos', pedidosController.agregarProductosAPedido);
+router.delete('/api/pedidos/:id/productos/:idProducto', pedidosController.eliminarProductoDePedido);
 
 export default router;

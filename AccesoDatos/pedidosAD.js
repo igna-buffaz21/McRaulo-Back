@@ -3,23 +3,11 @@ import sql from '../config/db.js';  // Importar la conexión
 async function obtenerPedido() {
     try{
         const result = await sql`SELECT * FROM pedidos`;
+
         return result;
     }
     catch (error) {
         throw new Error('Error al obtener los pedidos: ' + error.message);
-    }
-}
-
-async function obtenerPedidoPorId(id) {
-    try {
-        const result = await sql`SELECT * FROM pedidos WHERE id_pedido = ${id}`;
-        if (result.length === 0) {
-            throw new Error('Pedido no encontrado');
-        }
-        return result[0];
-    }
-    catch (error) {
-        throw new Error('Error al obtener el pedido por ID: ' + error.message);
     }
 }
 
@@ -74,7 +62,6 @@ async function crearPedido(productos, metodo_pago) {
       let total = 0;
 
       for (const producto of productos) {
-        // Verificar que el producto existe y está disponible
         const productoInfo = await sql`
           SELECT * FROM productos 
           WHERE id_producto = ${producto.id_producto} 
@@ -113,7 +100,6 @@ async function crearPedido(productos, metodo_pago) {
         total += subtotal;
       }
 
-      // Crear nuevo pedido
       const fechaHora = Math.floor(Date.now() / 1000);
       
       const nuevoPedido = await sql`
@@ -447,7 +433,111 @@ async function obtenerResumenDeProductosEnPedido(id_pedido) {
   }
 }
 
+async function obtenerPedidoPorId(id) {
+  try {
+      const result = await sql`
+          SELECT * FROM pedidos
+          WHERE id_pedido = ${id};
+      `;
+      return result;
+  } catch (error) {
+      throw new Error('Error al obtener el pedido: ' + error.message);
+  }
+}
+
+
+async function insertarPedidoProducto(idPedido, idProducto, subtotal, notas) {
+  try {
+      // Asegúrate de que notas sea null si está vacía
+      const notasLimpias = notas && notas.trim() !== '' ? notas : null;
+      
+      console.log('Insertando:', { idPedido, idProducto, subtotal, notasLimpias }); // Debug
+      
+      const result = await sql`
+          INSERT INTO pedidos_productos (id_pedido, id_producto, subtotal, notas)
+          VALUES (${idPedido}, ${idProducto}, ${subtotal}, ${notasLimpias})
+          RETURNING *;
+      `;
+      return result;
+  } catch (error) {
+      console.error('Error detallado al insertar producto:', {
+          idPedido,
+          idProducto,
+          subtotal,
+          notas,
+          error: error.message
+      });
+      throw new Error('Error al insertar producto en pedido: ' + error.message);
+  }
+}
+
+// 3. FUNCIÓN DE DIAGNÓSTICO - ÚSALA TEMPORALMENTE
+async function diagnosticarTabla() {
+  try {
+      // Ver estructura de la tabla
+      const estructura = await sql`
+          SELECT column_name, data_type, is_nullable, column_default
+          FROM information_schema.columns 
+          WHERE table_name = 'pedidos_productos'
+          ORDER BY ordinal_position;
+      `;
+      console.log('Estructura de pedidos_productos:', estructura);
+      
+      // Ver si hay datos
+      const count = await sql`SELECT COUNT(*) as total FROM pedidos_productos;`;
+      console.log('Total registros:', count[0].total);
+      
+  } catch (error) {
+      console.error('Error al diagnosticar:', error);
+  }
+}
+
+async function insertarPedidoProductoIngrediente(sql, idPedidoProducto, idIngrediente, cantidad, esExtra) {
+  try {
+      const result = await sql`
+          INSERT INTO pedidos_productos_ingredientes (
+              id_pedido_producto, 
+              id_ingrediente, 
+              cantidad, 
+              es_extra
+          )
+          VALUES (${idPedidoProducto}, ${idIngrediente}, ${cantidad}, ${esExtra});
+      `;
+      return result;
+  } catch (error) {
+      throw new Error('Error al insertar ingrediente: ' + error.message);
+  }
+}
+
+async function actualizarTotalPedido(sql, idPedido, nuevoTotal) {
+  try {
+      const result = await sql`
+          UPDATE pedidos
+          SET total = ${nuevoTotal}
+          WHERE id_pedido = ${idPedido}
+          RETURNING *;
+      `;
+      return result;
+  } catch (error) {
+      throw new Error('Error al actualizar total del pedido: ' + error.message);
+  }
+}
+
+async function obtenerProductoEnPedido(idPedido, idPedidoProducto) {
+  try {
+      const result = await sql`
+          SELECT * FROM pedidos_productos
+          WHERE id_pedido = ${idPedido} AND id_pedido_producto = ${idPedidoProducto};
+      `;
+      return result;
+  } catch (error) {
+      throw new Error('Error al obtener producto del pedido: ' + error.message);
+  }
+}
+
   
+
+
 
 export default {
     obtenerPedido,
@@ -460,5 +550,9 @@ export default {
     ObtenerEstadisticas,
     obtenerPedidoPorEstado,
     filtrarPedidosPorFecha,
-    obtenerResumenDeProductosEnPedido
+    obtenerResumenDeProductosEnPedido,
+    insertarPedidoProducto,
+    insertarPedidoProductoIngrediente,
+    actualizarTotalPedido,
+    obtenerProductoEnPedido
   };

@@ -6,5 +6,6 @@ const router = express.Router(); // Permite crear rutas para manejar las peticio
 router.get('/obtenerProductos', productosController.obtenerProductos);
 router.get('/obtenerProductoEspecificoConIngredientes/:id', productosController.obtenerProductoEspecificoConIngredientes);
 router.get('/obtenerProductoPorCategoria/:categoria', productosController.obtenerProductoPorCategoria);
+router.post('/api/productos/:id/calcular-precio', productosController.calcularPrecioProductoPersonalizado);
 
 export default router;

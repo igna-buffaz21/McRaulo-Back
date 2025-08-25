@@ -200,6 +200,65 @@ async function obtenerResumenDeProductosEnPedido(req, res) {
     }
 }
 
+async function agregarProductosAPedido(req, res) {
+    try {
+        const { id } = req.params;
+        const { productos } = req.body;
+        
+        const resultado = await pedidosN.agregarProductosAPedido(id, productos);
+        
+        res.status(200).json({
+            status: 'OK',
+            message: 'Productos agregados correctamente al pedido',
+            data: resultado
+        });
+    } catch (error) {
+        console.error(`Error al agregar productos al pedido:`, error);
+        
+        // Determinar código de estado según el tipo de error
+        let statusCode = 500;
+        if (error.message.includes('no existe') || error.message.includes('No se encontró')) {
+            statusCode = 404;
+        } else if (error.message.includes('requerido') || error.message.includes('Debe incluir') || error.message.includes('No se pueden agregar')) {
+            statusCode = 400;
+        }
+        
+        res.status(statusCode).json({
+            status: 'ERROR',
+            message: error.message
+        });
+    }
+}
+
+async function eliminarProductoDePedido(req, res) {
+    try {
+        const { id, idProducto } = req.params;
+        
+        const resultado = await pedidosN.eliminarProductoDePedido(id, idProducto);
+        
+        res.status(200).json({
+            status: 'OK',
+            message: 'Producto eliminado correctamente del pedido',
+            data: resultado
+        });
+    } catch (error) {
+        console.error(`Error al eliminar producto del pedido:`, error);
+        
+        // Determinar código de estado según el tipo de error
+        let statusCode = 500;
+        if (error.message.includes('no existe') || error.message.includes('No se encontró')) {
+            statusCode = 404;
+        } else if (error.message.includes('requerido') || error.message.includes('No se pueden eliminar')) {
+            statusCode = 400;
+        }
+        
+        res.status(statusCode).json({
+            status: 'ERROR',
+            message: error.message
+        });
+    }
+}
+
 export default {
     obtenerPedido,
     obtenerPedidoPorId,
@@ -211,5 +270,7 @@ export default {
     ObtenerEstadisticas,
     obtenerPedidoPorEstado,
     filtrarPedidosPorFecha,
-    obtenerResumenDeProductosEnPedido
+    obtenerResumenDeProductosEnPedido,
+    agregarProductosAPedido,
+    eliminarProductoDePedido
   };

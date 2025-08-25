@@ -30,8 +30,38 @@ async function obtenerProductoPorCategoria(req, res) {
     }
 }
 
+async function calcularPrecioProductoPersonalizado(req, res) {
+    try {
+        const { id } = req.params;
+        const { ingredientes_personalizados } = req.body;
+        
+        const resultado = await productosN.calcularPrecioProductoPersonalizado(id, ingredientes_personalizados);
+        
+        res.status(200).json({
+            status: 'OK',
+            data: resultado
+        });
+    } catch (error) {
+        console.error(`Error al calcular precio del producto:`, error);
+        
+        // Determinar código de estado según el tipo de error
+        let statusCode = 500;
+        if (error.message.includes('no existe') || error.message.includes('No se encontró')) {
+            statusCode = 404;
+        } else if (error.message.includes('requerido') || error.message.includes('debe ser mayor')) {
+            statusCode = 400;
+        }
+        
+        res.status(statusCode).json({
+            status: 'ERROR',
+            message: error.message
+        });
+    }
+}
+
 export default {
     obtenerProductos,
     obtenerProductoEspecificoConIngredientes,
-    obtenerProductoPorCategoria
+    obtenerProductoPorCategoria,
+    calcularPrecioProductoPersonalizado
 }
