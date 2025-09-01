@@ -5,7 +5,7 @@ async function obtenerProductos(req, res) {
         const productos = await productosN.obtenerProductos();
         res.status(200).json(productos);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los productos' });
+        res.status(500).json({ error: 'Error al obtener los productos ' + error.message });
     }
 }
 
@@ -15,7 +15,7 @@ async function obtenerProductoEspecificoConIngredientes(req, res) {
         const producto = await productosN.obtenerProductoEspecificoConIngredientes(id);
         res.status(200).json(producto);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener el producto específico' });
+        res.status(500).json({ error: 'Error al obtener el producto específico ' + error.message });
     }
 }
 

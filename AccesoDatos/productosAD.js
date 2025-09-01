@@ -5,7 +5,7 @@ async function obtenerProductos() {
         const result = await sql`
         SELECT * FROM productos 
         WHERE disponible = true
-        ORDER BY categoria, nombre;
+        ORDER BY nombre;
         `;
         return result;
     } catch (error) {
@@ -25,11 +25,11 @@ async function obtenerProductoEspecificoConIngredientes(id) {
       }
 
       const ingredientesBase = await sql`
-      SELECT pib.cantidad, i.id_ingrediente, i.nombre, i.descripcion, 
+    SELECT pib2.cantidad, i.id_ingrediente, i.nombre, i.descripcion, 
             i.precio, i.unidad_medida
-      FROM productos_ingredientes_base pib
-      JOIN ingredientes i ON pib.id_ingrediente = i.id_ingrediente
-      WHERE pib.id_producto = ${id}
+      FROM productos_ingrediente_base pib2 
+      JOIN ingredientes i ON pib2.id_ingrediente = i.id_ingrediente
+      WHERE pib2.id_producto = ${id}
       ORDER BY i.nombre;
     `;
 
