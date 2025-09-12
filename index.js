@@ -5,6 +5,7 @@ import pedidoRouter from './Router/pedidosR.js';
 import productoRouter from './Router/productosR.js';
 import ingredientesRouter from './Router/ingredientesR.js';
 import clientesRouter from './Router/clientesR.js'
+import cors from "cors";
 
 // Cargar variables de entorno
 dotenv.config();
@@ -12,6 +13,12 @@ dotenv.config();
 // Crear aplicación Express
 const app = express(); //te levanta un servidor http //se usa una sola vez en toda la app
 const PORT = process.env.PORT; 
+
+app.use(cors({
+  origin: '*', // Permitir todas las IPs
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'] // Encabezados permitidos
+}))
 
 // Middleware para parsear JSON
 app.use(express.json()); ///todas las respuestas se devuelven en json
