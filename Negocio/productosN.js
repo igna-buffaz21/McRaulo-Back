@@ -76,12 +76,26 @@ async function calcularPrecioProductoPersonalizado(idProducto, ingredientesPerso
     };
 }
 
+async function obtenerIngredientesParaModificar(id_producto) {
+    const producto = await productosAD.obtenerProductoPorId(id_producto);
+
+    if (producto.length === 0) {
+        throw new Error(`No se encontró el producto con ID ${id_producto}`);
+    }
+
+    const ingredientes = await productosAD.obtenerIngredientesParaModificar(id_producto);
+
+    return ingredientes;
+
+}
+
 
 export default {
     obtenerProductos,
     obtenerProductoEspecificoConIngredientes,
     obtenerProductoPorCategoria,
-    calcularPrecioProductoPersonalizado
+    calcularPrecioProductoPersonalizado,
+    obtenerIngredientesParaModificar
 }
 
 

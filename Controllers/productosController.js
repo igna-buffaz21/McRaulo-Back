@@ -30,7 +30,7 @@ async function obtenerProductoPorCategoria(req, res) {
     }
 }
 
-async function calcularPrecioProductoPersonalizado(req, res) {
+/*async function calcularPrecioProductoPersonalizado(req, res) {
     try {
         const { id } = req.params;
         const { ingredientes_personalizados } = req.body;
@@ -57,11 +57,22 @@ async function calcularPrecioProductoPersonalizado(req, res) {
             message: error.message
         });
     }
+}*/
+
+async function obtenerIngredientesParaModificar(req, res) {
+    const id = req.params.id;
+    try {
+        const ingredientes = await productosN.obtenerIngredientesParaModificar(id);
+        res.status(200).json(ingredientes);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error al obtener los ingredientes para modificar' });
+    }
 }
 
 export default {
     obtenerProductos,
     obtenerProductoEspecificoConIngredientes,
     obtenerProductoPorCategoria,
-    calcularPrecioProductoPersonalizado
+    obtenerIngredientesParaModificar
 }
