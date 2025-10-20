@@ -83,25 +83,37 @@ async function obtenerIngredientePorId(idIngrediente) {
     }
 }
 
-async function obtenerIngredientesParaModificar(id_producto) {
+async function caluclarPrecioYDisponibilidad(items) {
     try {
-        const result = await sql`
-        SELECT i.id_ingrediente, p.nombre as nombreBurger, i.nombre, 
-            i.precio, pib2.cantidad, pib2.max, i.unidad_medida, i.add, i.remove
-			, p.imagen_url
-        FROM productos_ingrediente_base pib2
-        INNER JOIN productos p ON p.id_producto = pib2.id_producto
-        INNER JOIN ingredientes i ON pib2.id_ingrediente = i.id_ingrediente
-        WHERE pib2.id_producto = ${id_producto} AND i.add = true OR i.remove = true
-        ORDER BY i.nombre
-    `;
-
-        return result;
+      if (!items?.length) return [];
+  
+      const ids = items.map(i => i.id_producto);
+  
+      const productos = await sql`
+        WITH lista AS (
+          SELECT unnest(${ids}::int[]) AS id_producto   -- 👈 casteo directo en SQL
+        )
+        SELECT p.id_producto, p.precio_base, p.disponible
+        FROM lista v
+        JOIN LATERAL (
+          SELECT id_producto, precio_base, disponible
+          FROM productos
+          WHERE productos.id_producto = v.id_producto
+        ) p ON TRUE;
+      `;
+  
+      return productos;
+  
+    } catch (error) {
+      console.error("❌ Error al obtener los productos:", error);
+      throw error;
     }
-    catch (error) {
-        throw new Error('Error al obtener los ingredientes para modificar: ' + error.message);
-    }
-}
+  }
+  
+  
+  
+  
+  
 
 ///hola
 
@@ -111,5 +123,5 @@ export default {
     obtenerProductoPorCategoria,
     obtenerProductoPorId,
     obtenerIngredientePorId,
-    obtenerIngredientesParaModificar
+    caluclarPrecioYDisponibilidad
 }

@@ -5,6 +5,7 @@ import pedidoRouter from './Router/pedidosR.js';
 import productoRouter from './Router/productosR.js';
 import ingredientesRouter from './Router/ingredientesR.js';
 import clientesRouter from './Router/clientesR.js'
+import PaymentRouter from './Router/paymentR.js';
 import cors from "cors";
 
 // Cargar variables de entorno
@@ -74,7 +75,9 @@ app.use('/api/productos', productoRouter);
 
 app.use('/api/ingredientes', ingredientesRouter);
 
-app.use('/api/clientes', clientesRouter)
+app.use('/api/clientes', clientesRouter);
+
+app.use('/api/payment', PaymentRouter);
 
 // Iniciar el servidor
 app.listen(PORT, async () => {

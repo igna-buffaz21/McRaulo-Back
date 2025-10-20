@@ -1,14 +1,28 @@
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import paymentN from '../Negocio/paymentN.js';
 
-const client = new MercadoPagoConfig({
-    accessToken: process.env.ACCESS_TOKEN
-});
+async function crearOrden(req, res) {
+    const pedido = req.body;
 
-export const createOrder = async (req, res) => {
     try {
-        const preference = new Preference(client);
+        console.log('🛒 Creando orden con los siguientes items:', pedido);
 
-        const result = await preference.create({
+        const response = await paymentN.crearOrden(pedido);
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+export const crearOrdenasd = async (req, res) => {
+
+
+    try {
+
+        console.log('🛒 Creando orden con los siguientes items:', pedido.items);
+
+        //const preference = new Preference(client);
+
+        /*const result = await preference.create({
             body: {
                 items: [
                     {
@@ -32,11 +46,11 @@ export const createOrder = async (req, res) => {
                 auto_return: "approved",
                 notification_url: "https://0e7853dc2510.ngrok-free.app/webhook"
             }
-        });
+        });*/
 
         res.json({
-            message: "Orden creada",
-            init_point: result.sandbox_init_point //sandbox
+            //message: "Orden creada",
+            //init_point: result.sandbox_init_point //sandbox
             // init_point: result.init_point //producción
         });
         
@@ -88,4 +102,8 @@ export const paymentWebhook = async (req, res) => {
         res.sendStatus(500);
     }
 };
+
+export default {
+    crearOrden
+}
 
