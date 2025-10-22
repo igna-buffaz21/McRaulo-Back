@@ -32,17 +32,33 @@ async function crearPedido(fecha_hora, total, estado, metodo_pago) {
         RETURNING *;
       `;
   
-      console.log("✅ Insert correcto:", result);
       return result;
     } catch (error) {
       console.error("❌ Error al insertar pedidos_productos:", error);
       throw new Error("Error al insertar pedidos_productos: " + error.message);
     }
-  }  
+  }
+  
+  async function marcarPagoCompletado(estado_pago, mp_preference_id, mp_payment_id, id_pedido) {
+    try {
+      const result = await sql`
+      INSERT INTO public.pago(
+      estado_pago, mp_preference_id, mp_payment_id, id_pedido)
+      VALUES (${estado_pago}, ${mp_preference_id}, ${mp_payment_id}, ${id_pedido});
+      `;
+
+      return result;
+    }
+    catch (error) {
+      console.error("ERROR AL CREAR EL PAGO " + error);
+      throw new Error("Error al crear el pago " + error.message);
+    }
+  }
   
   
 
 export default {
     crearPedido,
-    crearDetallePedido
+    crearDetallePedido,
+    marcarPagoCompletado
 }

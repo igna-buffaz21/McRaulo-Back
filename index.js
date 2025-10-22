@@ -4,27 +4,22 @@ import sql, { testConnection } from './config/db.js';
 import pedidoRouter from './Router/pedidosR.js'; 
 import productoRouter from './Router/productosR.js';
 import ingredientesRouter from './Router/ingredientesR.js';
-import clientesRouter from './Router/clientesR.js'
 import PaymentRouter from './Router/paymentR.js';
 import cors from "cors";
 
-// Cargar variables de entorno
 dotenv.config();
 
-// Crear aplicación Express
-const app = express(); //te levanta un servidor http //se usa una sola vez en toda la app
+const app = express();
 const PORT = process.env.PORT; 
 
 app.use(cors({
-  origin: '*', // Permitir todas las IPs
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'Authorization'] // Encabezados permitidos
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
-// Middleware para parsear JSON
-app.use(express.json()); ///todas las respuestas se devuelven en json
+app.use(express.json());
 
-// Verificar que el servidor está funcionando
 app.get('/', (req, res) => {
   res.json({
     message: 'API de Autoservicio de Hamburguesas',
@@ -33,7 +28,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// Verificar la conexión a la base de datos
 app.get('/db-test', async (req, res) => {
   try {
     // Testear la conexión
@@ -75,18 +69,13 @@ app.use('/api/productos', productoRouter);
 
 app.use('/api/ingredientes', ingredientesRouter);
 
-app.use('/api/clientes', clientesRouter);
-
 app.use('/api/payment', PaymentRouter);
 
-// Iniciar el servidor
 app.listen(PORT, async () => {
   console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
   
-  // Verificar la conexión a la base de datos al iniciar
   await testConnection();
   
-  // Cerrar el proceso si no se puede conectar a la base de datos
   process.on('SIGINT', async () => {
     console.log('Cerrando conexiones a la base de datos...');
     await sql.end();
