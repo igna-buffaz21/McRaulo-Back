@@ -33,7 +33,7 @@ async function crearOrden(items) {
 
         const fecha_hora = Math.floor(Date.now() / 1000);
 
-        const idPedido = await paymentAD.crearPedido(fecha_hora, total, ESTADOS_PEDIDO.PENDIENTE_PAGO, items.checkout_steps.paymentMethod)
+        const idPedido = await paymentAD.crearPedido(fecha_hora, total, ESTADOS_PEDIDO.PENDIENTE_PAGO, items.checkout_steps.paymentMethod, items.checkout_steps.orderType)
 
         const crearDetalle = await paymentAD.crearDetallePedido(idPedido, items.cart_products)
 
@@ -49,12 +49,12 @@ async function crearOrden(items) {
                     quantity: 1,
                   })),
                   back_urls: {
-                    success: "https://example.com/success",
-                    failure: "https://example.com/failure",
-                    pending: "https://example.com/pending",
+                    success: `${process.env.FRONT_URL}/estado-pago`,
+                    failure: `${process.env.FRONT_URL}/estado-pago`,
+                    pending: `${process.env.FRONT_URL}/estado-pago`,
                   },
                   auto_return: "approved",
-                  notification_url: `https://46796d982895.ngrok-free.app/api/payment/webhook`,
+                  notification_url: `${process.env.BACK_URL}/api/payment/webhook`,
                   external_reference: idPedido.toString(),
                 }
               });
@@ -100,7 +100,19 @@ async function marcarPagoCompletado(estado_pago, mp_preference_id, mp_payment_id
     }
 }
 
+async function comprobarPago(idPedido, idPago) {
+    try {
+        const response = await paymentAD.comprobarPago(idPedido, idPago)
+
+        return response
+    }
+    catch (error) {
+        console.log("ERROR EN NEGOCIO " + error.message)
+    }
+}
+
 export default {
     crearOrden,
-    marcarPagoCompletado
+    marcarPagoCompletado,
+    comprobarPago
 }

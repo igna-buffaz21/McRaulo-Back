@@ -1,6 +1,6 @@
   export const METODO_PAGO = Object.freeze({
       MERCADO_PAGO: 'mercado-pago',
-      EFECTIVO: 'efectivo'
+      EFECTIVO: 'cash'
     });
 
   export const ESTADOS_PEDIDO = Object.freeze({

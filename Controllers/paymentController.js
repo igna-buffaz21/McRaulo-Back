@@ -1,9 +1,12 @@
 import paymentN from '../Negocio/paymentN.js';
+import pedidosAD from '../AccesoDatos/pedidosAD.js';
+import { ESTADOS_PEDIDO } from '../config/const.js';
 
 async function crearOrden(req, res) {
     const pedido = req.body;
 
     try {
+        //console.log(pedido)
 
         const response = await paymentN.crearOrden(pedido);
 
@@ -35,7 +38,10 @@ async function webhook(req, res) {
           if (payment.status == "approved") {
             console.log("------------------------PAGO SE REALIZO CON EXITO------------------------")
             const response = await paymentN.marcarPagoCompletado(payment.status, payment.id, payment.preference_id || null, Number(payment.external_reference))
-            res.status(200).json("Pago realizado con exito " + response)
+
+            const updatePedido = await pedidosAD.actualizarEstadoPago(Number(payment.external_reference), ESTADOS_PEDIDO.PENDIENTE)
+
+            res.status(200).json("Pago realizado con exito " + response + " / Update pedido: " + updatePedido)
 
           }
           else if (payment.status == "rejected") {
@@ -61,8 +67,26 @@ async function webhook(req, res) {
         res.sendStatus(500);
       }
 }
+
+async function comprobarPago(req, res) {
+  try {
+      const { idPedido, idPago } = req.query;
+
+      console.log("ID PEDIDO: " + idPedido  + " / ID PAGO " + idPago)
+
+      const response = await paymentN.comprobarPago(idPedido, idPago)
+
+      res.status(200).json(response)
+  }
+  catch (error) {
+    console.error("❌ Error procesando webhook MP:", error);
+    res.sendStatus(500);
+  }
+}
+
 export default {
     crearOrden,
-    webhook
+    webhook,
+    comprobarPago
 }
 

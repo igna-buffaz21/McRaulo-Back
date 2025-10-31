@@ -1,10 +1,10 @@
 import sql from '../config/db.js';  // Importar la conexión
 
-async function crearPedido(fecha_hora, total, estado, metodo_pago) {
+async function crearPedido(fecha_hora, total, estado, metodo_pago, tipo) {
     try {
       const result = await sql`
-        INSERT INTO public.pedidos (fecha_hora, total, estado, metodo_pago)
-        VALUES (${fecha_hora}, ${total}, ${estado}, ${metodo_pago})
+        INSERT INTO public.pedidos (fecha_hora, total, estado, metodo_pago, tipo)
+        VALUES (${fecha_hora}, ${total}, ${estado}, ${metodo_pago}, ${tipo})
         RETURNING id_pedido;
       `;
   
@@ -54,11 +54,25 @@ async function crearPedido(fecha_hora, total, estado, metodo_pago) {
       throw new Error("Error al crear el pago " + error.message);
     }
   }
-  
-  
+
+  async function comprobarPago(idPedido, idPago) {
+    try {
+      const result = await sql `SELECT p.id_pedido, p.fecha_hora, p.tipo, pa.estado_pago  FROM pago pa
+      INNER JOIN pedidos p ON p.id_pedido = pa.id_pedido
+      WHERE pa.mp_preference_id = ${idPago} AND pa.id_pedido = ${idPedido}
+      `;
+
+      return result;
+    }
+    catch (error) {
+      console.error("ERROR AL COMPROBAR EL PAGO " + error);
+      throw new Error("Error al crear el pago " + error.message);
+    } 
+  }
 
 export default {
     crearPedido,
     crearDetallePedido,
-    marcarPagoCompletado
+    marcarPagoCompletado,
+    comprobarPago
 }
