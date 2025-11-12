@@ -10,3 +10,9 @@
     LISTO: 'listo',
     ENTREGADO: 'entregado'
   });
+
+  export const ESTADOS_PAGO = Object.freeze({
+    APROBADO: 'approved',
+    PENDIENTE: 'pending',
+    RECHAZADO: 'rejected'
+  });

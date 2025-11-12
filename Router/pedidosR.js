@@ -3,18 +3,12 @@ import pedidosController from '../Controllers/pedidoController.js';
 
 const router = express.Router(); //permite crear rutas para manejar las peticiones HTTP relacionadas con los pedidos
 
-router.get('/obtenerTodosLosPedidos', pedidosController.obtenerPedido);
-router.get('/obtenerPedidoPorId/:id', pedidosController.obtenerPedidoPorId);
-router.get('/obtenerPedidoConDetalleCompleto/:id', pedidosController.obtenerPedidoConDetalleCompleto);
-router.post('/crearPedido', pedidosController.crearPedidoN);
-router.put('/actualizarEstado', pedidosController.ActualizarEstadoPedido);
-router.delete('/eliminarPedido/:id', pedidosController.EliminarPedido);
-router.get('/obtenerDetalleProductoEnPedido/:idPedido/:idProducto', pedidosController.ObtenerDetalleProductoEnPedido);
-router.get('/obtenerEstadisticas', pedidosController.ObtenerEstadisticas);
-router.get('/obtenerPedidosPorEstado/:estado', pedidosController.obtenerPedidoPorEstado);
-router.get('/filtrarPedidosPorFecha/:desde/:hasta', pedidosController.filtrarPedidosPorFecha);
-router.get('/obtenerResumenDeProductosEnPedido/:id', pedidosController.obtenerResumenDeProductosEnPedido);
-router.post('/api/pedidos/:id/productos', pedidosController.agregarProductosAPedido);
-router.delete('/api/pedidos/:id/productos/:idProducto', pedidosController.eliminarProductoDePedido);
+router.get('/obtenerPedidoPendienteDePago', pedidosController.obtenerPedidoPendienteDePago);
+router.post('/CrearPago', pedidosController.CrearPagoEfectivo);
+router.get('/obtenerPedidosPendientes', pedidosController.obtenerPedidosPendientes);
+router.get('/obtenerPedidosPreparacion', pedidosController.obtenerPedidosPreparacion);
+router.get('/cambiarEstadoPedido', pedidosController.cambiarEstadoPedido);
+router.get('/obtenerDetallePedido', pedidosController.obtenerDetallePedido);
+router.get('/obtenerPedidosListos', pedidosController.obtenerPedidosListos);
 
 export default router;
